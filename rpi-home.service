@@ -1,0 +1,21 @@
+[Unit]
+Description=Raspberry Pi Home Services (Pi-hole + Homebridge)
+Requires=docker.service
+After=docker.service
+Wants=network-online.target
+After=network-online.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+WorkingDirectory=/home/peterbeno/rpi-home
+ExecStart=/usr/bin/docker compose up
+ExecStop=/usr/bin/docker compose down
+ExecReload=/usr/bin/docker compose restart
+TimeoutStartSec=0
+# Auto-restart every 7 days to pull latest Docker images (latest tags)
+Restart=always
+RestartSec=604800
+
+[Install]
+WantedBy=multi-user.target

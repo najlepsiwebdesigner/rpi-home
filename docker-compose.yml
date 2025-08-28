@@ -1,0 +1,33 @@
+services:
+
+  # --- Pi-hole DNS server ---
+  pihole:
+    image: pihole/pihole:latest
+    network_mode: host
+    restart: unless-stopped
+    environment:
+      TZ: ${RPI_TZ}
+      FTLCONF_webserver_api_password: ${PIHOLE_WEBPASSWORD}
+    ports:
+      # DNS Ports
+      - "53:53/tcp"
+      - "53:53/udp"
+      # Default HTTP Port
+      - "${PIHOLE_WEB_PORT}:80/tcp"
+      # Default HTTPs Port. FTL will generate a self-signed certificate
+      - "443:443/tcp"
+      # Uncomment the below if using Pi-hole as your DHCP Server
+      #- "67:67/udp"
+    volumes:
+      - ./data/pihole/etc-pihole:/etc/pihole
+      - ./data/pihole/etc-dnsmasq.d:/etc/dnsmasq.d
+
+  # --- Homebridge ---
+  homebridge:
+    image: homebridge/homebridge:latest
+    network_mode: host
+    restart: unless-stopped
+    environment:
+      TZ: ${RPI_TZ}
+    volumes:
+      - ./data/homebridge:/homebridge
